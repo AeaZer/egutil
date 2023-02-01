@@ -2,10 +2,15 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"strings"
 )
 
-const excelColRegexp = "^[A-Z]+$"
+const excelColPattern = "^[A-Z]+$"
+const (
+	dollarByte  byte = 36
+	percentByte byte = 37
+	sByte       byte = 115
+)
 
 type wds interface {
 	absPath() string
@@ -14,9 +19,10 @@ type wds interface {
 }
 
 type generatorHandler struct {
-	forFormatColsFlag []string // need trans
-	forFormatCols     []int
-	wds               wds
+	forFormatColsIndex []int
+	template           string
+
+	wds wds
 }
 
 func newWds(wdsType int, path, targetPath, template string, forFormatCols []int, startLine, endLine int) (wds, error) {
@@ -41,36 +47,42 @@ func getColIndex(flag string) int {
 	return 0
 }
 
-func (g *generatorHandler) transFlagToIndex() error {
-	index, ok := validateColsFlag(g.forFormatColsFlag)
-	if !ok {
-		return fmt.Errorf("error col flag %s", g.forFormatColsFlag[index])
+// TODO: 需要支持 A* 列
+func (g *generatorHandler) handleTemplate(template string) {
+	templateBytes := []byte(template)
+	for i := 0; i < len(templateBytes); i++ {
+		if templateBytes[i] == dollarByte {
+			templateBytes[i] = percentByte
+			i++
+			g.forFormatColsIndex = append(g.forFormatColsIndex, int(templateBytes[i]-65))
+			templateBytes[i] = sByte
+		}
 	}
-	for _, colFlag := range g.forFormatColsFlag {
-		g.forFormatCols = append(g.forFormatCols, getColIndex(colFlag))
-	}
-	return nil
+	g.template = string(templateBytes)
 }
 
-func newGeneratorHandler(wdsType int, path, targetPath,
-	template string, forFormatCols []string, startLine, endLine int) (*generatorHandler, error) {
-	g := &generatorHandler{
-		forFormatColsFlag: forFormatCols,
+func (g *generatorHandler) startGenerator() error {
+	return g.wds.generator()
+}
+
+func generatorTargetPath(path string) string {
+	pathSplit := strings.SplitN(path, ".", 2)
+	if len(pathSplit) != 2 {
+		panic("unexpected path")
 	}
-	err := g.transFlagToIndex()
-	if err != nil {
-		return nil, err
+	return pathSplit[0] + "_generator.sql"
+}
+
+func newSimpleSqlGeneratorHandler(path, template string, config *generatorSQLConfig) (*generatorHandler, error) {
+	if config == nil {
+		config = &generatorSQLConfig{}
 	}
-	w, err := newWds(wdsType, path, targetPath, template, g.forFormatCols, startLine, endLine)
+	g := new(generatorHandler)
+	g.handleTemplate(template)
+	w, err := newWds(typeSql, path, generatorTargetPath(path), g.template, g.forFormatColsIndex, config.startLine, config.endLine)
 	if err != nil {
 		return nil, err
 	}
 	g.wds = w
 	return g, nil
-}
-
-func newSimpleSqlGeneratorHandler(path, template string, forFormatCols []string, config *generatorSQLConfig) {
-	if config == nil {
-
-	}
 }

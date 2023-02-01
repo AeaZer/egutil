@@ -3,23 +3,18 @@ package main
 import "fmt"
 
 func main() {
-	// TODO: 待简化
-	handler, err := newGeneratorHandler(
-		typeSql,
-		"/Users/tommorrow/Downloads/target.xlsx",
-		"/Users/tommorrow/Downloads/updateSql.txt",
-		"UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = %s AND `sound_id` = %s;",
-		[]string{"C", "A"},
-		2,
-		0,
-	)
+	path := "/Users/tommorrow/Downloads/target.xlsx"
+	template := "UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = $C AND `sound_id` = $A;"
+	handler, err := newSimpleSqlGeneratorHandler(path, template, &generatorSQLConfig{
+		startLine: 1,
+	})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err.Error())
 		return
 	}
-	err = handler.wds.generator()
+	err = handler.startGenerator()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err.Error())
 		return
 	}
 }
