@@ -7,9 +7,9 @@ import (
 
 const excelColPattern = "^[A-Z]+$"
 const (
-	dollarByte  byte = 36
-	percentByte byte = 37
-	sByte       byte = 115
+	dollarByte  byte = 36  // '$'
+	percentByte byte = 37  // '%'
+	sByte       byte = 115 // 's'
 )
 
 type wds interface {
@@ -54,6 +54,9 @@ func (g *generatorHandler) handleTemplate(template string) {
 		if templateBytes[i] == dollarByte {
 			templateBytes[i] = percentByte
 			i++
+			if i == len(templateBytes) {
+				panic("error template, $ must have char followed")
+			}
 			g.forFormatColsIndex = append(g.forFormatColsIndex, int(templateBytes[i]-65))
 			templateBytes[i] = sByte
 		}
