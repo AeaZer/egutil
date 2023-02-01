@@ -20,7 +20,7 @@ type generatorHandler struct {
 }
 
 func newWds(wdsType int, path, targetPath, template string, forFormatCols []int, startLine, endLine int) (wds, error) {
-	if path == "" || targetPath == "" || template == "" || len(forFormatCols) == 0 || startLine > endLine {
+	if path == "" || targetPath == "" || template == "" || len(forFormatCols) == 0 || (startLine > endLine && endLine > 0) {
 		return nil, errors.New("params input error")
 	}
 	switch wdsType {

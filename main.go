@@ -3,14 +3,15 @@ package main
 import "fmt"
 
 func main() {
+	// TODO: 待简化
 	handler, err := newGeneratorHandler(
 		typeSql,
-		"C:\\Users\\34749\\Downloads\\target.xlsx",
-		"C:\\Users\\34749\\Downloads\\updateSql.txt",
-		"UPDATE m_sound_comment SET police = 1 where id = %s AND dm_id = %s",
-		[]string{"A", "C"},
+		"/Users/tommorrow/Downloads/target.xlsx",
+		"/Users/tommorrow/Downloads/updateSql.txt",
+		"UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = %s AND `sound_id` = %s;",
+		[]string{"C", "A"},
 		2,
-		5,
+		0,
 	)
 	if err != nil {
 		fmt.Println(err)
