@@ -8,7 +8,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-type generatorSQLConfig struct {
+type generateSQLConfig struct {
 	startLine, endLine int
 }
 
@@ -28,7 +28,7 @@ func (s *sqlHandler) generateType() int {
 	return typeSql
 }
 
-func newSql(path, targetPath, template string, forFormatCol []int, startLine, endLine int) (*sqlHandler, error) {
+func newSQLHandler(path, targetPath, template string, forFormatCol []int, startLine, endLine int) (*sqlHandler, error) {
 	return &sqlHandler{
 		path:          path,
 		targetPath:    targetPath,
@@ -39,7 +39,7 @@ func newSql(path, targetPath, template string, forFormatCol []int, startLine, en
 	}, nil
 }
 
-func (s *sqlHandler) generator() error {
+func (s *sqlHandler) generate() error {
 	excel, err := excelize.OpenFile(s.path)
 	if err != nil {
 		fmt.Println("【源文件】打开失败", err)
@@ -82,5 +82,9 @@ func (s *sqlHandler) generator() error {
 }
 
 func writeRowString(writer *bufio.Writer, writeTarget string) {
-	writer.WriteString(writeTarget + "\n")
+	_, err := writer.WriteString(writeTarget + "\n")
+	if err != nil {
+		fmt.Println("【写入】时发生错误", err)
+		return
+	}
 }

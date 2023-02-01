@@ -1,9 +1,9 @@
-package main
+# egutil
+generator sql with excel
 
-import "fmt"
-
-func main() {
-	path := "/Users/tommorrow/Downloads/target.xlsx"
+## quick start
+```golang
+    path := "/Users/tommorrow/Downloads/target.xlsx"
 	template := "UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = $C AND `sound_id` = $A;"
 	handler, err := newSimpleSQLGenerateHandler(path, template, &generateSQLConfig{
 		startLine: 1,
@@ -17,4 +17,4 @@ func main() {
 		fmt.Println(err.Error())
 		return
 	}
-}
+```
