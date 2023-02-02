@@ -1,6 +1,22 @@
 # egutil
 generator sql with excel
 
+## 脚本使用场景
+|A|B|C|
+|--|--|--|
+|sound_id|id|name|
+|1|100|哈哈哈|
+|2|200|哈哈哈2|
+|3|300|哈哈哈3|
+
+如上表格每行需要生成一条语句
+eg：
+```sql
+UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = 100 AND `sound_id` = 1;
+UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = 200 AND `sound_id` = 2;
+UPDATE m_sound_comment SET `pool` = 40 WHERE `id` = 300 AND `sound_id` = 3;
+```
+
 ## quick start
 ```golang
     path := "/Users/tommorrow/Downloads/target.xlsx"
