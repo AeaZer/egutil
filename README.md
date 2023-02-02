@@ -18,3 +18,6 @@ generator sql with excel
 		return
 	}
 ```
+
+### 不支持
+- 不支持 template 中的 ${excel 列标识} `len(列标识) != 1`
