@@ -18,7 +18,7 @@ generator sql with excel
 		return
 	}
 ```
-- 生成的文件为 path 同目录下名称为同名.sql 的文件
+- 生成的文件为 path 同目录下名称为同名_generator.sql 的文件
 - template 不一定是 sql（不校验 template 是否是合法的 sql ），可以时任意的字符串
 - generateSQLConfig 可以为 nil 表示整个文件所有行都会生成一条 sql
 
