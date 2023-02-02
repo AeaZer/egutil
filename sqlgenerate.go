@@ -8,7 +8,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-type generateSQLConfig struct {
+type GenerateSQLConfig struct {
 	startLine, endLine int
 }
 
@@ -25,7 +25,7 @@ func (s *sqlHandler) absPath() string {
 }
 
 func (s *sqlHandler) generateType() int {
-	return typeSql
+	return TypeSql
 }
 
 func newSQLHandler(path, targetPath, template string, forFormatCol []int, startLine, endLine int) (*sqlHandler, error) {
@@ -68,23 +68,27 @@ func (s *sqlHandler) generate() error {
 		fmt.Println("【写入文件】打开失败", err)
 		return err
 	}
-	//及时关闭file句柄
+	// 及时关闭 file 句柄
 	defer file.Close()
-	//写入文件时，使用带缓存的 *Writer
+	// 写入文件时，使用带缓存的 *Writer
 	write := bufio.NewWriter(file)
 	for _, generatorSql := range generatorSqls {
-		writeRowString(write, generatorSql)
+		err = writeRowString(write, generatorSql)
+		if err != nil {
+			fmt.Println("【写入】时发生错误", err)
+			return err
+		}
 	}
 	fmt.Println("row count", len(generatorSqls))
-	//Flush将缓存的文件真正写入到文件中
+	// Flush 将缓存的文件真正写入到文件中
 	write.Flush()
 	return nil
 }
 
-func writeRowString(writer *bufio.Writer, writeTarget string) {
+func writeRowString(writer *bufio.Writer, writeTarget string) error {
 	_, err := writer.WriteString(writeTarget + "\n")
 	if err != nil {
-		fmt.Println("【写入】时发生错误", err)
-		return
+		return err
 	}
+	return nil
 }
