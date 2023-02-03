@@ -12,10 +12,10 @@ type wds interface {
 }
 
 type GenerateHandler struct {
-	forFormatColsIndex []int
-	template           string
+	forFormatColsIndex []int  // for sql generate
+	template           string // for sql generate
 
-	wds wds
+	wds wds // interface for all
 }
 
 func NewWds(wdsType int, path, targetPath, template string, forFormatCols []int, startLine, endLine int) (wds, error) {
@@ -23,8 +23,8 @@ func NewWds(wdsType int, path, targetPath, template string, forFormatCols []int,
 		return nil, errors.New("params input error")
 	}
 	switch wdsType {
-	case TypeSql:
-		return newSQLHandler(path, targetPath, template, forFormatCols, startLine, endLine)
+	case TypeSQL:
+		return newSQLGenerate(path, targetPath, template, forFormatCols, startLine, endLine)
 	}
 	return nil, errors.New("error wdsType")
 }
@@ -61,7 +61,7 @@ func generatorTargetPath(path string) string {
 	if len(pathSplit) != 2 {
 		panic("unexpected path")
 	}
-	return pathSplit[0] + "_generator.sql"
+	return pathSplit[0] + "_generate.sql"
 }
 
 func NewSimpleSQLGenerateHandler(path, template string, config *GenerateSQLConfig) (*GenerateHandler, error) {
@@ -70,7 +70,7 @@ func NewSimpleSQLGenerateHandler(path, template string, config *GenerateSQLConfi
 	}
 	g := new(GenerateHandler)
 	g.handleTemplate(template)
-	w, err := NewWds(TypeSql, path, generatorTargetPath(path), g.template, g.forFormatColsIndex, config.startLine, config.endLine)
+	w, err := NewWds(TypeSQL, path, generatorTargetPath(path), g.template, g.forFormatColsIndex, config.startLine, config.endLine)
 	if err != nil {
 		return nil, err
 	}

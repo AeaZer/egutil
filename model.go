@@ -1,7 +1,8 @@
 package main
 
 const (
-	TypeSql = iota + 1
+	TypeSQL = iota + 1
+	TypePD
 )
 
 const excelColPattern = "^[A-Z]+$"

@@ -12,7 +12,7 @@ type GenerateSQLConfig struct {
 	startLine, endLine int
 }
 
-type sqlHandler struct {
+type sqlGenerate struct {
 	path               string
 	targetPath         string
 	template           string
@@ -20,16 +20,16 @@ type sqlHandler struct {
 	startLine, endLine int
 }
 
-func (s *sqlHandler) absPath() string {
+func (s *sqlGenerate) absPath() string {
 	return s.path
 }
 
-func (s *sqlHandler) generateType() int {
-	return TypeSql
+func (s *sqlGenerate) generateType() int {
+	return TypeSQL
 }
 
-func newSQLHandler(path, targetPath, template string, forFormatCol []int, startLine, endLine int) (*sqlHandler, error) {
-	return &sqlHandler{
+func newSQLGenerate(path, targetPath, template string, forFormatCol []int, startLine, endLine int) (*sqlGenerate, error) {
+	return &sqlGenerate{
 		path:          path,
 		targetPath:    targetPath,
 		template:      template,
@@ -39,7 +39,7 @@ func newSQLHandler(path, targetPath, template string, forFormatCol []int, startL
 	}, nil
 }
 
-func (s *sqlHandler) generate() error {
+func (s *sqlGenerate) generate() error {
 	excel, err := excelize.OpenFile(s.path)
 	if err != nil {
 		fmt.Println("【源文件】打开失败", err)
